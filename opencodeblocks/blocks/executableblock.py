@@ -32,7 +32,14 @@ class OCBExecutableBlock(OCBBlock):
         super().__init__(**kwargs)
 
         self.has_been_run = False
+
+        # 0 for normal, 1 for running, 2 for transmitting
         self.run_color = 0
+
+        # Each element is a list of blocks/edges to be animated
+        # Running will paint each element one after the other
+        self.transmitting_queue = []
+        # Controls the duration of the visual flow animation
         self.transmitting_duration = 500
 
         # Add execution flow sockets
@@ -283,10 +290,10 @@ class OCBExecutableBlock(OCBBlock):
         self.blocks_to_run = blocks_to_run
 
         # For each output found
-        for block in blocks_to_run[::-1]:
+        for block in blocks_to_run.copy()[::-1]:
             # Gather dependencies
             new_blocks_to_run, _ = self.custom_bfs(block)
-            blocks_to_run += new_blocks_to_run
+            self.blocks_to_run += new_blocks_to_run
 
         # Set delay so that the transmitting animation has fixed total duration
         self.transmitting_delay = int(
