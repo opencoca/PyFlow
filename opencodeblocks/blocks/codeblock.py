@@ -5,13 +5,12 @@
 
 from typing import OrderedDict, Optional
 from PyQt5.QtWidgets import (
-    QApplication,
     QPushButton,
     QTextEdit,
     QWidget,
     QStyleOptionGraphicsItem,
 )
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPen, QColor, QPainter, QPainterPath
 
 from ansi2html import Ansi2HTMLConverter
@@ -226,6 +225,12 @@ class OCBCodeBlock(OCBExecutableBlock):
     @source.setter
     def source(self, value: str):
         if value != self._source:
+            # If text has changed, set self and all output blocks to not run
+            output_blocks, _ = self.custom_bfs(self, reverse=True)
+            for block in output_blocks:
+                block.has_been_run = False
+            self._source = value
+            self.update_all()
             self.has_been_run = False
             self.source_editor.setText(value)
             self._source = value
