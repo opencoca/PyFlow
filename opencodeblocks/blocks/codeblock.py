@@ -230,7 +230,6 @@ class OCBCodeBlock(OCBExecutableBlock):
             for block in output_blocks:
                 block.has_been_run = False
             self._source = value
-            self.update_all()
             self.has_been_run = False
             self.source_editor.setText(value)
             self._source = value
