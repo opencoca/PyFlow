@@ -7,9 +7,12 @@ A block able to render Markdown.
 
 """
 
+import os
+
 from typing import OrderedDict
 from markdown import markdown
 
+from PyQt5.QtCore import QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.Qsci import QsciLexerMarkdown, QsciScintilla
 from PyQt5.QtGui import QColor, QFont
@@ -67,7 +70,14 @@ class MarkdownBlock(Block):
             </style>
         """
 
-        self.rendered_markdown.setHtml(f"{dark_theme}{markdown(t)}")
+        # cwd needs to be changed to kernel cwd
+        # but I did not find how to access it from here
+        cwd = ""
+
+        self.rendered_markdown.setHtml(
+            f"{dark_theme}{markdown(t)}",
+            baseUrl=QUrl.fromLocalFile(cwd + os.path.sep),
+        )
 
     @property
     def text(self) -> str:
